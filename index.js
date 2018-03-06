@@ -49,15 +49,34 @@ const Graph = function(error, graph) {
         .selectAll("circle")
         .data(graph.nodes)
         .enter().append("circle")
-        .attr("r", 5)
+        // .attr("r", 5)
+        .attr("r", function(d) {
+            if (typeof(d.radius) == 'undefined') {
+                return 5;
+            } else {
+                return d.radius;
+            }
+        })
         .attr("fill", function(d) { return color(d.group); })
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended));
+    console.log('graph.nodes = ');
     console.log(graph.nodes);
     node.append("title")
         .text(function(d) { return d.id; });
+
+    var label = svg.selectAll(".mytext")
+        .data(graph.nodes)
+        .enter()
+        .append("text")
+        .text(function(d) { return d.id; })
+        .style("text-anchor", "middle")
+        .style("fill", "#555")
+        .style("font-family", "Arial")
+        .style("font-size", 12);
+
     simulation
         .nodes(graph.nodes)
         .on("tick", ticked);
@@ -73,6 +92,9 @@ const Graph = function(error, graph) {
         node
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
+        label
+            .attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; });
     }
 };
 
