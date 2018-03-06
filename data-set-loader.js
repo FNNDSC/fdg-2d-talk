@@ -9,9 +9,8 @@ function scaleFactorDown() {
 }
 
 function onNode(state) {
-    state.__sphere.scale.x *= scaleFactor;
-    state.__sphere.scale.y *= scaleFactor;
-    state.__sphere.scale.z *= scaleFactor;
+    console.log('here!');
+    state.__circle.scale.r *= scaleFactor;
 }
 
 function graphSet_jsonFileLoad(astr_jsonFileName) {
@@ -26,13 +25,14 @@ function getGraphDataSets() {
 
     let l_graph = [
         'miserables',
-        'cloud'
+        'cloud',
+        'chris',
+        'chris-2'
     ];
 
     let l_graphFunction = [];
 
     for (i in l_graph) {
-        console.log(i);
         const funcObj = graphSet_jsonFileLoad(l_graph[i] + '.json');
         funcObj.description = "<em>" + l_graph[i] + "</em> topology";
         funcObj.uid = l_graph[i];
