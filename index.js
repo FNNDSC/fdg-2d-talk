@@ -6,9 +6,9 @@
 let curDataSetIdx = null;
 const dataSets = getGraphDataSets();
 
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+var svg = d3.select("svg");
+var width = window.innerWidth;
+var height = window.innerHeight;
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
