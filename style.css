@@ -36,14 +36,6 @@ body {
     color: slategrey;
 }
 
-.svg-wrap {
-    background-color: red;
-    height: 0;
-    padding-top: 63.63%;
-    /* 350px/550px */
-    position: relative;
-}
-
 svg {
     background-color: cyan;
     height: 100%;
