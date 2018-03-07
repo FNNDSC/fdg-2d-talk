@@ -12,6 +12,12 @@ var height = window.innerHeight;
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+var b_labelsShow = false;
+var graphLinks;
+var graphNodes;
+var graphNode_textAttributes;
+var fcb_linksNodesLabels_show
+
 var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody())
@@ -35,21 +41,23 @@ function dragended(d) {
     d.fy = null;
 }
 
-const Graph = function(error, graph) {
-    if (error) throw error;
-    var link = svg.append("g")
+function graphLinks_define(onGraph) {
+    ret_linkvar = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
-        .data(graph.links)
+        .data(onGraph.links)
         .enter().append("line")
         .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
-    console.log(graph.links);
-    var node = svg.append("g")
+    console.log(onGraph.links);
+    return (ret_linkvar);
+}
+
+function graphNodes_define(onGraph) {
+    ret_node = svg.append("g")
         .attr("class", "nodes")
         .selectAll("circle")
-        .data(graph.nodes)
+        .data(onGraph.nodes)
         .enter().append("circle")
-        // .attr("r", 5)
         .attr("r", function(d) {
             if (typeof(d.radius) == 'undefined') {
                 return 5;
@@ -63,39 +71,88 @@ const Graph = function(error, graph) {
             .on("drag", dragged)
             .on("end", dragended));
     console.log('graph.nodes = ');
-    console.log(graph.nodes);
-    node.append("title")
-        .text(function(d) { return d.id; });
+    console.log(onGraph.nodes);
+    return (ret_node);
+}
 
-    var label = svg.selectAll(".mytext")
-        .data(graph.nodes)
+function nodes_setLabelsAndOpacity(onGraph, opacity) {
+    return (
+        svg.selectAll(".mytext")
+        .data(onGraph.nodes)
         .enter()
         .append("text")
+        .attr("id", function(d) {
+            if (d.id.indexOf('link') == -1)
+                return d.id;
+            else
+                return '';
+        })
         .text(function(d) { return d.id; })
+        .style("opacity", opacity)
         .style("text-anchor", "middle")
         .style("fill", "#555")
         .style("font-family", "Arial")
-        .style("font-size", 12);
+        .style("font-size", 12)
+    );
+}
 
-    simulation
-        .nodes(graph.nodes)
-        .on("tick", ticked);
-    simulation.force("link")
-        .links(graph.links);
+function titleAdd(onNodes) {
+    onNodes.append("title")
+        .text(function(d) { return d.id; });
+}
 
-    function ticked() {
-        link
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-        node
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-        label
-            .attr("x", function(d) { return d.x; })
-            .attr("y", function(d) { return d.y; });
+function onNodeClick_do(d) {
+    console.log(d);
+    console.log('clicked on node ' + d.id);
+    console.log('labelsShow = ' + b_labelsShow);
+}
+
+function allNodesAttr_set(graphNodes, attr, value) {
+    a_node = graphNodes._groups[0];
+    for (let node of a_node) {
+        str_id = node.__data__.id;
+        d3.select('#' + str_id).style(attr, value);
     }
+}
+
+function fcb_linksNodesLabels_show() {
+    graphLinks
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+    graphNodes
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+    graphNode_textAttributes
+        .attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; });
+}
+
+function simulation_run(onGraph, fcb_tick) {
+    simulation
+        .nodes(onGraph.nodes)
+        .on("tick", fcb_tick);
+    simulation.force("link")
+        .links(onGraph.links);
+}
+
+const Graph = function(error, graph) {
+    if (error) throw error;
+
+    graphLinks = graphLinks_define(graph);
+    graphNodes = graphNodes_define(graph);
+    graphNode_textAttributes = nodes_setLabelsAndOpacity(graph, 0);
+    titleAdd(graphNodes);
+    graphNodes.on("click", function(d) {
+        b_labelsShow = !b_labelsShow;
+        onNodeClick_do(d);
+        if (b_labelsShow)
+            allNodesAttr_set(graphNodes, 'opacity', 1);
+        else
+            allNodesAttr_set(graphNodes, 'opacity', 0);
+    });
+    simulation_run(graph, fcb_linksNodesLabels_show);
 };
 
 function getUrlParams(search) {
