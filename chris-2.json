@@ -1,5 +1,6 @@
 {
   "nodes": [
+    {"id": "BCH",             "group": 5,       "radius": 20},
     {"id": "webclient",       "group": 1,       "radius": 10},
     {"id": "CUBE",            "group": 2,       "radius": 30},
     {"id": "pfcon",           "group": 2,       "radius": 20},
@@ -25,13 +26,15 @@
     {"id": "linkc5",          "group": 500},
     {"id": "linkc6",          "group": 500},
     {"id": "linkc7",          "group": 500},
-    {"id": "pman-cloud",      "group": 7,       "radius": 15},
-    {"id": "pfioh-cloud",     "group": 7,       "radius": 15},    
-    {"id": "storage-cloud",   "group": 7,       "radius": 10},    
+    {"id": "pman-cloud",      "group": 3,       "radius": 15},
+    {"id": "pfioh-cloud",     "group": 3,       "radius": 15},    
+    {"id": "storage-cloud",   "group": 3,       "radius": 10},    
     {"id": "openshift",       "group": 8},
-    {"id": "pl-container",    "group": 9}    
+    {"id": "pl-container",    "group": 9,       "radius": 10}
     ],
   "links": [
+    {"source": "BCH",         "target": "PACS",             "value": 10},
+    {"source": "BCH",         "target": "orthanc",          "value": 10},
     {"source": "linkc1",      "target": "webclient",        "value": 10},
     {"source": "linkc1",      "target": "linkc2",           "value": 10},
     {"source": "linkc2",      "target": "linkc3",           "value": 10},
